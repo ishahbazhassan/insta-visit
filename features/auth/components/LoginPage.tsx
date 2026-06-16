@@ -2,10 +2,10 @@
 
 import React from "react";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 import Heading from "../../../app/components/ui/headings/Heading";
 import InputField from "../../../app/components/ui/inputs/InputField";
 import Button from "../../../app/components/ui/button/Button";
+import { useLogin } from "../hooks/useLogin";
 
 interface LoginPageProps {
   onNavigate: (page: "forgotPassword" | "signUp") => void;
@@ -19,19 +19,12 @@ const LoginPage: React.FC<LoginPageProps> = ({
   const { control, handleSubmit } = useForm({
     defaultValues: { email: "", password: "" },
   });
-
-  const onSubmit = (data: any) => {
-    const loadToast = toast.loading("Checking credentials...");
-    setTimeout(() => {
-      toast.success("Credentials accepted!", { id: loadToast });
-      onLoginSuccess(data.email);
-    }, 1000);
-  };
+  const { submitLogin, isLoading } = useLogin(onLoginSuccess);
 
   return (
     <>
       <Heading title="Login" className="mb-6" />
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(submitLogin)}>
         <div className="flex flex-col gap-2">
           <InputField
             label="Email"
@@ -60,7 +53,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
           </button>
         </div>
         <div className="mt-4">
-          <Button type="submit" label="Login" />
+          <Button type="submit" label="Login" disabled={isLoading} />
         </div>
       </form>
       <div className="mt-6 text-center text-[14px] text-[#999999]">

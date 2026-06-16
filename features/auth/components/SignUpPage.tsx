@@ -2,12 +2,12 @@
 
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 import Heading from "../../../app/components/ui/headings/Heading";
 import InputField from "../../../app/components/ui/inputs/InputField";
 import Button from "../../../app/components/ui/button/Button";
 import SelectField from "../../../app/components/ui/inputs/SelectField";
 import CheckboxField from "../../../app/components/ui/inputs/CheckboxField";
+import { useSignUp } from "../hooks/useSignUp";
 
 interface SignUpPageProps {
   onNavigate: (page: "login") => void;
@@ -19,6 +19,7 @@ const SignUpPage: React.FC<SignUpPageProps> = ({
   onSignUpSuccess,
 }) => {
   const { control, handleSubmit, watch, setValue } = useForm();
+  const { submitSignUp, isLoading } = useSignUp(onSignUpSuccess);
 
   const sameAsHomeAddress = watch("sameAsHomeAddress");
   const homeStreetAddress = watch("homeStreetAddress");
@@ -49,18 +50,10 @@ const SignUpPage: React.FC<SignUpPageProps> = ({
     setValue,
   ]);
 
-  const onSubmit = (data: any) => {
-    const loadToast = toast.loading("Processing request...");
-    setTimeout(() => {
-      toast.success("Request processed!", { id: loadToast });
-      onSignUpSuccess(data.email || "User");
-    }, 1200);
-  };
-
   return (
     <div className="max-h-[80vh] overflow-y-auto pr-2 custom-scrollbar">
       <Heading title="Sign Up" className="mb-6 text-center" />
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit(submitSignUp)} className="flex flex-col gap-4">
         {/* Personal Information */}
         <div className="grid grid-cols-2 gap-4">
           <InputField
@@ -86,6 +79,22 @@ const SignUpPage: React.FC<SignUpPageProps> = ({
           type="email"
           control={control}
           placeholder="e.g. abc_john@email.com"
+          required
+        />
+        <InputField
+          label="Password"
+          name="password"
+          type="password"
+          control={control}
+          placeholder="Enter password"
+          required
+        />
+        <InputField
+          label="Confirm password"
+          name="confirmPassword"
+          type="password"
+          control={control}
+          placeholder="Re-enter password"
           required
         />
         <InputField
@@ -193,7 +202,7 @@ const SignUpPage: React.FC<SignUpPageProps> = ({
         />
 
         <div className="mt-4">
-          <Button type="submit" label="Send Request" />
+          <Button type="submit" label="Send Request" disabled={isLoading} />
         </div>
       </form>
       <div className="mt-6 text-center text-[14px] text-[#999999] mb-4">

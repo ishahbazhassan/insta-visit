@@ -4,7 +4,8 @@ import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import { login } from "../api/auth.api";
 import type { LoginPayload } from "../types/auth.types";
-import { getErrorMessage, setAccessToken } from "@/lib/api";
+import { getErrorMessage } from "@/lib/api";
+import { setAuthSession } from "../lib/session";
 
 export function useLogin(onSuccess: (email: string) => void) {
   const [isLoading, setIsLoading] = useState(false);
@@ -16,7 +17,7 @@ export function useLogin(onSuccess: (email: string) => void) {
 
       try {
         const result = await login(payload);
-        setAccessToken(result.accessToken);
+        setAuthSession(result.accessToken, result.user);
         toast.success("Logged in!", { id: loadToast });
         onSuccess(result.user.email);
       } catch (error) {

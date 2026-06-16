@@ -3,14 +3,16 @@ export type LoginPayload = {
   password: string;
 };
 
+export type AuthUser = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+};
+
 export type LoginResponse = {
   accessToken: string;
-  user: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-  };
+  user: AuthUser;
 };
 
 export type SignUpPayload = {

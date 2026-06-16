@@ -20,6 +20,11 @@ export function setAccessToken(token: string): void {
   localStorage.setItem("accessToken", token);
 }
 
+export function clearAccessToken(): void {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem("accessToken");
+}
+
 api.interceptors.request.use((config) => {
   const token = getAccessToken();
   if (token) {

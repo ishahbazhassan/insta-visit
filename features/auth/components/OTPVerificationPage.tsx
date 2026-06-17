@@ -1,37 +1,47 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { FaArrowLeft, FaRedoAlt } from "react-icons/fa";
 import Heading from "../../../app/components/ui/headings/Heading";
 import InputField from "../../../app/components/ui/inputs/InputField";
 import Button from "../../../app/components/ui/button/Button";
+import { AUTH_ROUTES } from "../constants/routes";
+import { getResetEmail } from "../lib/session";
 import { useForgotPassword } from "../hooks/useForgotPassword";
 import { useVerifyOtp } from "../hooks/useVerifyOtp";
 
-interface OTPProps {
-  onNavigate: (page: "forgotPassword" | "resetPassword" | "login") => void;
-  userEmail: string;
-}
-
-const OTPVerificationPage: React.FC<OTPProps> = ({
-  onNavigate,
-  userEmail,
-}) => {
+const OTPVerificationPage: React.FC = () => {
+  const router = useRouter();
+  const userEmail = getResetEmail() ?? "";
   const { control, handleSubmit } = useForm({ defaultValues: { otp: "" } });
+
+  useEffect(() => {
+    if (!userEmail) {
+      router.replace(AUTH_ROUTES.forgotPassword);
+    }
+  }, [userEmail, router]);
 
   const { resendOtp, isLoading: isResending } = useForgotPassword(() => {});
   const { submitVerifyOtp, isLoading: isVerifying } = useVerifyOtp({
     userEmail,
-    onSuccess: () => onNavigate("resetPassword"),
+    onSuccess: () => router.push(AUTH_ROUTES.resetPassword),
   });
 
   const isLoading = isResending || isVerifying;
 
+  if (!userEmail) {
+    return null;
+  }
+
   return (
     <>
       <div className="flex items-center gap-3 mb-6">
-        <button type="button" onClick={() => onNavigate("forgotPassword")}>
+        <button
+          type="button"
+          onClick={() => router.push(AUTH_ROUTES.forgotPassword)}
+        >
           <FaArrowLeft size={20} />
         </button>
         <Heading title="OTP verification" />

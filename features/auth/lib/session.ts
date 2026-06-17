@@ -48,3 +48,25 @@ export function clearResetToken(): void {
   if (typeof window === "undefined") return;
   localStorage.removeItem(RESET_TOKEN_KEY);
 }
+
+const RESET_EMAIL_KEY = "resetEmail";
+
+export function setResetEmail(email: string): void {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(RESET_EMAIL_KEY, email);
+}
+
+export function getResetEmail(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem(RESET_EMAIL_KEY);
+}
+
+export function clearResetEmail(): void {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem(RESET_EMAIL_KEY);
+}
+
+export function clearPasswordResetSession(): void {
+  clearResetToken();
+  clearResetEmail();
+}

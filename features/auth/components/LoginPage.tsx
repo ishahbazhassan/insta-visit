@@ -1,25 +1,22 @@
 "use client";
 
 import React from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import Heading from "../../../app/components/ui/headings/Heading";
 import InputField from "../../../app/components/ui/inputs/InputField";
 import Button from "../../../app/components/ui/button/Button";
+import { AUTH_ROUTES } from "../constants/routes";
 import { useLogin } from "../hooks/useLogin";
 
-interface LoginPageProps {
-  onNavigate: (page: "forgotPassword" | "signUp") => void;
-  onLoginSuccess: () => void;
-}
-
-const LoginPage: React.FC<LoginPageProps> = ({
-  onNavigate,
-  onLoginSuccess,
-}) => {
+const LoginPage: React.FC = () => {
+  const router = useRouter();
   const { control, handleSubmit } = useForm({
     defaultValues: { email: "", password: "" },
   });
-  const { submitLogin, isLoading } = useLogin(onLoginSuccess);
+  const { submitLogin, isLoading } = useLogin(() =>
+    router.push("/provider/dashboard"),
+  );
 
   return (
     <>
@@ -46,7 +43,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
         <div className="flex justify-end mt-2">
           <button
             type="button"
-            onClick={() => onNavigate("forgotPassword")}
+            onClick={() => router.push(AUTH_ROUTES.forgotPassword)}
             className="text-[#F76D00] text-[14px] font-bold hover:underline"
           >
             Forgot password?
@@ -57,10 +54,10 @@ const LoginPage: React.FC<LoginPageProps> = ({
         </div>
       </form>
       <div className="mt-6 text-center text-[14px] text-[#999999]">
-        Don't have an account?{" "}
+        Don&apos;t have an account?{" "}
         <button
           type="button"
-          onClick={() => onNavigate("signUp")}
+          onClick={() => router.push(AUTH_ROUTES.signup)}
           className="text-[#705295] font-bold hover:underline"
         >
           Sign Up

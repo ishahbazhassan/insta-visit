@@ -1,25 +1,22 @@
 "use client";
 
 import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import Heading from "../../../app/components/ui/headings/Heading";
 import InputField from "../../../app/components/ui/inputs/InputField";
 import Button from "../../../app/components/ui/button/Button";
 import SelectField from "../../../app/components/ui/inputs/SelectField";
 import CheckboxField from "../../../app/components/ui/inputs/CheckboxField";
+import { AUTH_ROUTES } from "../constants/routes";
 import { useSignUp } from "../hooks/useSignUp";
 
-interface SignUpPageProps {
-  onNavigate: (page: "login") => void;
-  onSignUpSuccess: () => void;
-}
-
-const SignUpPage: React.FC<SignUpPageProps> = ({
-  onNavigate,
-  onSignUpSuccess,
-}) => {
+const SignUpPage: React.FC = () => {
+  const router = useRouter();
   const { control, handleSubmit, watch, setValue } = useForm();
-  const { submitSignUp, isLoading } = useSignUp(onSignUpSuccess);
+  const { submitSignUp, isLoading } = useSignUp(() =>
+    router.push(AUTH_ROUTES.login),
+  );
 
   const sameAsHomeAddress = watch("sameAsHomeAddress");
   const homeStreetAddress = watch("homeStreetAddress");
@@ -54,7 +51,6 @@ const SignUpPage: React.FC<SignUpPageProps> = ({
     <div className="max-h-[80vh] overflow-y-auto pr-2 custom-scrollbar">
       <Heading title="Sign Up" className="mb-6 text-center" />
       <form onSubmit={handleSubmit(submitSignUp)} className="flex flex-col gap-4">
-        {/* Personal Information */}
         <div className="grid grid-cols-2 gap-4">
           <InputField
             label="First name"
@@ -105,8 +101,6 @@ const SignUpPage: React.FC<SignUpPageProps> = ({
           placeholder="(000) 000 0000"
           required
         />
-
-        {/* Professional Information */}
         <InputField
           label="NPI Number"
           name="npiNumber"
@@ -149,8 +143,6 @@ const SignUpPage: React.FC<SignUpPageProps> = ({
             required
           />
         </div>
-
-        {/* Address Information */}
         <InputField
           label="Home Street Address"
           name="homeStreetAddress"
@@ -209,7 +201,7 @@ const SignUpPage: React.FC<SignUpPageProps> = ({
         Existing Account?{" "}
         <button
           type="button"
-          onClick={() => onNavigate("login")}
+          onClick={() => router.push(AUTH_ROUTES.login)}
           className="text-[#705295] font-bold hover:underline"
         >
           Sign In.

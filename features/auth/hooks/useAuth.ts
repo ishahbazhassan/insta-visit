@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { AUTH_ROUTES } from "../constants/routes";
 import {
   clearAuthSession,
   getAuthUser,
@@ -17,14 +18,14 @@ export function useAuth() {
   const logout = useCallback(() => {
     clearAuthSession();
     setUser(null);
-    router.replace("/");
+    router.replace(AUTH_ROUTES.login);
   }, [router]);
 
   useEffect(() => {
     if (!isAuthenticated()) {
       clearAuthSession();
       setIsLoading(false);
-      router.replace("/");
+      router.replace(AUTH_ROUTES.login);
       return;
     }
 

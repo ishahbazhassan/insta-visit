@@ -1,33 +1,42 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { FaArrowLeft } from "react-icons/fa";
 import Heading from "../../../app/components/ui/headings/Heading";
 import InputField from "../../../app/components/ui/inputs/InputField";
 import Button from "../../../app/components/ui/button/Button";
+import { AUTH_ROUTES } from "../constants/routes";
+import {
+  clearPasswordResetSession,
+  getResetToken,
+} from "../lib/session";
 import { useResetPassword } from "../hooks/useResetPassword";
 
-interface ResetPasswordPageProps {
-  onNavigate: (page: "otpVerification" | "login") => void;
-}
-
-const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({
-  onNavigate,
-}) => {
+const ResetPasswordPage: React.FC = () => {
+  const router = useRouter();
   const { control, handleSubmit } = useForm({
     defaultValues: { newPassword: "", confirmPassword: "" },
   });
-  const { submitResetPassword, isLoading } = useResetPassword(() =>
-    onNavigate("login"),
-  );
+
+  useEffect(() => {
+    if (!getResetToken()) {
+      router.replace(AUTH_ROUTES.verifyOtp);
+    }
+  }, [router]);
+
+  const { submitResetPassword, isLoading } = useResetPassword(() => {
+    clearPasswordResetSession();
+    router.push(AUTH_ROUTES.login);
+  });
 
   return (
     <>
       <div className="flex items-center gap-3 mb-6">
         <button
           type="button"
-          onClick={() => onNavigate("otpVerification")}
+          onClick={() => router.push(AUTH_ROUTES.verifyOtp)}
           className="text-[#0A1E25] hover:text-[#705295] transition-colors"
         >
           <FaArrowLeft size={20} />

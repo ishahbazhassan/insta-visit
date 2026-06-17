@@ -11,6 +11,7 @@ import { SignupDto } from './dto/signup.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { BadRequestException } from '@nestjs/common';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -200,6 +201,43 @@ export class AuthService {
     return {
       message: 'OTP verified successfully',
       resetToken,
+    };
+  }
+
+  async resetPassword(dto: ResetPasswordDto) {
+    let payload: {
+      sub: string;
+      email: string;
+      purpose?: string;
+    };
+
+    try {
+      payload = this.jwtService.verify(dto.resetToken);
+    } catch {
+      throw new BadRequestException('Invalid or expired reset token');
+    }
+
+    if (payload.purpose !== 'password-reset') {
+      throw new BadRequestException('Invalid reset token');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: payload.sub },
+    });
+
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    const hashedPassword = await bcrypt.hash(dto.newPassword, 10);
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { password: hashedPassword },
+    });
+
+    return {
+      message: 'Password updated successfully',
     };
   }
 

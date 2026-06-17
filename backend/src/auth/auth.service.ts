@@ -8,6 +8,7 @@ import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import { SignupDto } from './dto/signup.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -111,5 +112,49 @@ export class AuthService {
     }
 
     return { user };
+  }
+
+  async forgotPassword(dto: ForgotPasswordDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
+
+    // Always return same message (don't reveal if email exists)
+    const successMessage =
+      'If this email is registered, an OTP has been sent';
+
+    if (!user) {
+      return { message: successMessage };
+    }
+
+    // Optional: invalidate old unused OTPs for this user
+    await this.prisma.passwordReset.updateMany({
+      where: {
+        userId: user.id,
+        used: false,
+      },
+      data: {
+        used: true,
+      },
+    });
+
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // OTP expires in 10 minutes
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+
+    await this.prisma.passwordReset.create({
+      data: {
+        userId: user.id,
+        otp,
+        expiresAt,
+      },
+    });
+
+    // Dev only: log OTP (replace with email service later)
+    console.log(`[Forgot Password] OTP for ${user.email}: ${otp}`);
+
+    return { message: successMessage };
   }
 }

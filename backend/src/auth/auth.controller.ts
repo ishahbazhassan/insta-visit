@@ -13,6 +13,7 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { SignupDto } from './dto/signup.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
 
 type AuthenticatedRequest = Request & {
   user: {
@@ -41,5 +42,11 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   getMe(@Req() req: AuthenticatedRequest) {
     return this.authService.getProfile(req.user.userId);
+  }
+
+  @Post('forgot-password')
+  @HttpCode(HttpStatus.OK)
+  forgotPassword(@Body() dto: ForgotPasswordDto) {
+    return this.authService.forgotPassword(dto);
   }
 }

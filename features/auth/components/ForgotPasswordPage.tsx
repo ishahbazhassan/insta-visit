@@ -3,13 +3,13 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { FaArrowLeft } from "react-icons/fa";
-import toast from "react-hot-toast";
 import Heading from "../../../app/components/ui/headings/Heading";
 import InputField from "../../../app/components/ui/inputs/InputField";
 import Button from "../../../app/components/ui/button/Button";
+import { useForgotPassword } from "../hooks/useForgotPassword";
 
 interface ForgotProps {
-  onNavigate: (page: any) => void;
+  onNavigate: (page: "login") => void;
   onForgotSuccess: (email: string) => void;
 }
 
@@ -18,14 +18,7 @@ const ForgotPasswordPage: React.FC<ForgotProps> = ({
   onForgotSuccess,
 }) => {
   const { control, handleSubmit } = useForm({ defaultValues: { email: "" } });
-
-  const onSubmit = (data: any) => {
-    const loadToast = toast.loading("Requesting OTP...");
-    setTimeout(() => {
-      toast.success("OTP sent!", { id: loadToast });
-      onForgotSuccess(data.email);
-    }, 1200);
-  };
+  const { submitForgotPassword, isLoading } = useForgotPassword(onForgotSuccess);
 
   return (
     <>
@@ -39,7 +32,7 @@ const ForgotPasswordPage: React.FC<ForgotProps> = ({
         </button>
         <Heading title="Forgot password?" />
       </div>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(submitForgotPassword)}>
         <div className="flex flex-col gap-2">
           <InputField
             label="Email address"
@@ -51,7 +44,7 @@ const ForgotPasswordPage: React.FC<ForgotProps> = ({
           />
         </div>
         <div className="mt-4">
-          <Button type="submit" label="Next" />
+          <Button type="submit" label="Next" disabled={isLoading} />
         </div>
       </form>
     </>

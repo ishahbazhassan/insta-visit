@@ -3,10 +3,10 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { FaArrowLeft } from "react-icons/fa";
-import toast from "react-hot-toast";
 import Heading from "../../../app/components/ui/headings/Heading";
 import InputField from "../../../app/components/ui/inputs/InputField";
 import Button from "../../../app/components/ui/button/Button";
+import { useResetPassword } from "../hooks/useResetPassword";
 
 interface ResetPasswordPageProps {
   onNavigate: (page: "otpVerification" | "login") => void;
@@ -18,20 +18,9 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({
   const { control, handleSubmit } = useForm({
     defaultValues: { newPassword: "", confirmPassword: "" },
   });
-
-  const onSubmit = (data: any) => {
-    if (data.newPassword !== data.confirmPassword) {
-      return toast.error("Passwords do not match!");
-    }
-
-    const loadToast = toast.loading("Updating password...");
-
-    // Simulate API update
-    setTimeout(() => {
-      toast.success("Password reset! Please login.", { id: loadToast });
-      onNavigate("login");
-    }, 1500);
-  };
+  const { submitResetPassword, isLoading } = useResetPassword(() =>
+    onNavigate("login"),
+  );
 
   return (
     <>
@@ -46,7 +35,7 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({
         <Heading title="Reset password" />
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(submitResetPassword)}>
         <div className="flex flex-col gap-2">
           <InputField
             label="New password"
@@ -67,7 +56,7 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({
         </div>
 
         <div className="mt-4">
-          <Button type="submit" label="Reset password" />
+          <Button type="submit" label="Reset password" disabled={isLoading} />
         </div>
       </form>
     </>

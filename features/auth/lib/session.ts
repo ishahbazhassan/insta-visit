@@ -31,3 +31,20 @@ export function clearAuthSession(): void {
 export function isAuthenticated(): boolean {
   return !!getAccessToken() && !!getAuthUser();
 }
+
+const RESET_TOKEN_KEY = "resetToken";
+
+export function setResetToken(token: string): void {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(RESET_TOKEN_KEY, token);
+}
+
+export function getResetToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem(RESET_TOKEN_KEY);
+}
+
+export function clearResetToken(): void {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem(RESET_TOKEN_KEY);
+}

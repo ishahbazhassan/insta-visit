@@ -49,3 +49,35 @@ export type SignUpResponse = {
     createdAt: string;
   };
 };
+
+export type ForgotPasswordPayload = {
+  email: string;
+};
+
+export type ForgotPasswordResponse = {
+  message: string;
+};
+
+export type VerifyOtpPayload = {
+  email: string;
+  otp: string;
+};
+
+export type VerifyOtpResponse = {
+  message: string;
+  resetToken: string;
+};
+
+export type ResetPasswordPayload = {
+  resetToken: string;
+  newPassword: string;
+};
+
+export type ResetPasswordFormValues = {
+  newPassword: string;
+  confirmPassword: string;
+};
+
+export type ResetPasswordResponse = {
+  message: string;
+};

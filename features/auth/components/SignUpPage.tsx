@@ -11,7 +11,7 @@ import { useSignUp } from "../hooks/useSignUp";
 
 interface SignUpPageProps {
   onNavigate: (page: "login") => void;
-  onSignUpSuccess: (email: string) => void;
+  onSignUpSuccess: () => void;
 }
 
 const SignUpPage: React.FC<SignUpPageProps> = ({

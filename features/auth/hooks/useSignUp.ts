@@ -6,7 +6,7 @@ import { signup } from "../api/auth.api";
 import type { SignUpFormValues } from "../types/auth.types";
 import { getErrorMessage } from "@/lib/api";
 
-export function useSignUp(onSuccess: (email: string) => void) {
+export function useSignUp(onSuccess: () => void) {
   const [isLoading, setIsLoading] = useState(false);
 
   const submitSignUp = useCallback(
@@ -45,7 +45,7 @@ export function useSignUp(onSuccess: (email: string) => void) {
         });
 
         toast.success(result.message ?? "Account created!", { id: loadToast });
-        onSuccess(result.user.email);
+        onSuccess();
       } catch (error) {
         toast.error(getErrorMessage(error) || "Signup failed", { id: loadToast });
       } finally {

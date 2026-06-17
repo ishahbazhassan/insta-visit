@@ -7,7 +7,7 @@ import type { LoginPayload } from "../types/auth.types";
 import { getErrorMessage } from "@/lib/api";
 import { setAuthSession } from "../lib/session";
 
-export function useLogin(onSuccess: (email: string) => void) {
+export function useLogin(onSuccess: () => void) {
   const [isLoading, setIsLoading] = useState(false);
 
   const submitLogin = useCallback(
@@ -19,7 +19,7 @@ export function useLogin(onSuccess: (email: string) => void) {
         const result = await login(payload);
         setAuthSession(result.accessToken, result.user);
         toast.success("Logged in!", { id: loadToast });
-        onSuccess(result.user.email);
+        onSuccess();
       } catch (error) {
         toast.error(getErrorMessage(error) || "Login failed", { id: loadToast });
       } finally {

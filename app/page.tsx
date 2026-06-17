@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Toaster } from "react-hot-toast";
 import LoginPage from "../features/auth/components/LoginPage";
 import SignUpPage from "../features/auth/components/SignUpPage";
@@ -17,15 +18,14 @@ type AuthPage =
   | "resetPassword";
 
 const AuthModal = () => {
+  const router = useRouter();
   const [currentPage, setCurrentPage] = useState<AuthPage>("login");
   const [userEmail, setUserEmail] = useState<string>("");
-  const [flowType, setFlowType] = useState<"auth" | "reset">("auth");
 
   const navigateTo = (page: AuthPage) => setCurrentPage(page);
 
-  const handleStartOTP = (email: string, type: "auth" | "reset") => {
+  const handleForgotSuccess = (email: string) => {
     setUserEmail(email);
-    setFlowType(type);
     setCurrentPage("otpVerification");
   };
 
@@ -41,26 +41,25 @@ const AuthModal = () => {
           {currentPage === "login" && (
             <LoginPage
               onNavigate={navigateTo}
-              onLoginSuccess={(email) => handleStartOTP(email, "auth")}
+              onLoginSuccess={() => router.push("/provider/dashboard")}
             />
           )}
           {currentPage === "signUp" && (
             <SignUpPage
               onNavigate={navigateTo}
-              onSignUpSuccess={(email) => handleStartOTP(email, "auth")}
+              onSignUpSuccess={() => navigateTo("login")}
             />
           )}
           {currentPage === "forgotPassword" && (
             <ForgotPasswordPage
               onNavigate={navigateTo}
-              onForgotSuccess={(email) => handleStartOTP(email, "reset")}
+              onForgotSuccess={handleForgotSuccess}
             />
           )}
           {currentPage === "otpVerification" && (
             <OTPVerificationPage
               onNavigate={navigateTo}
               userEmail={userEmail}
-              nextStep={flowType === "reset" ? "resetPassword" : "dashboard"}
             />
           )}
           {currentPage === "resetPassword" && (

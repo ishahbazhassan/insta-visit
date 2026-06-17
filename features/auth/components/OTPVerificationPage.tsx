@@ -12,21 +12,18 @@ import { useVerifyOtp } from "../hooks/useVerifyOtp";
 interface OTPProps {
   onNavigate: (page: "forgotPassword" | "resetPassword" | "login") => void;
   userEmail: string;
-  nextStep: "dashboard" | "resetPassword";
 }
 
 const OTPVerificationPage: React.FC<OTPProps> = ({
   onNavigate,
   userEmail,
-  nextStep,
 }) => {
   const { control, handleSubmit } = useForm({ defaultValues: { otp: "" } });
 
   const { resendOtp, isLoading: isResending } = useForgotPassword(() => {});
   const { submitVerifyOtp, isLoading: isVerifying } = useVerifyOtp({
     userEmail,
-    nextStep,
-    onResetSuccess: () => onNavigate("resetPassword"),
+    onSuccess: () => onNavigate("resetPassword"),
   });
 
   const isLoading = isResending || isVerifying;
@@ -43,9 +40,7 @@ const OTPVerificationPage: React.FC<OTPProps> = ({
         Code sent to{" "}
         <span className="text-[#705295] font-semibold">{userEmail}</span>
       </p>
-      <form
-        onSubmit={handleSubmit((data) => submitVerifyOtp(data.otp))}
-      >
+      <form onSubmit={handleSubmit((data) => submitVerifyOtp(data.otp))}>
         <InputField
           label="One-Time Passcode"
           name="otp"
@@ -57,7 +52,7 @@ const OTPVerificationPage: React.FC<OTPProps> = ({
         <div className="flex justify-end mt-2">
           <button
             type="button"
-            disabled={isLoading || nextStep !== "resetPassword"}
+            disabled={isLoading}
             onClick={() => resendOtp(userEmail)}
             className="flex items-center gap-1 text-[#F76D00] text-[14px] font-bold disabled:opacity-50"
           >

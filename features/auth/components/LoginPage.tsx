@@ -9,7 +9,7 @@ import { useLogin } from "../hooks/useLogin";
 
 interface LoginPageProps {
   onNavigate: (page: "forgotPassword" | "signUp") => void;
-  onLoginSuccess: (email: string) => void;
+  onLoginSuccess: () => void;
 }
 
 const LoginPage: React.FC<LoginPageProps> = ({

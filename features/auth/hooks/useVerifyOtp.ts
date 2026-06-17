@@ -8,36 +8,22 @@ import { setResetToken } from "../lib/session";
 
 type UseVerifyOtpOptions = {
   userEmail: string;
-  nextStep: "dashboard" | "resetPassword";
-  onResetSuccess: () => void;
+  onSuccess: () => void;
 };
 
-export function useVerifyOtp({
-  userEmail,
-  nextStep,
-  onResetSuccess,
-}: UseVerifyOtpOptions) {
+export function useVerifyOtp({ userEmail, onSuccess }: UseVerifyOtpOptions) {
   const [isLoading, setIsLoading] = useState(false);
 
   const submitVerifyOtp = useCallback(
     async (otp: string) => {
       const loadToast = toast.loading("Verifying...");
-
-      if (nextStep === "dashboard") {
-        setTimeout(() => {
-          toast.success("Verified!", { id: loadToast });
-          window.location.href = "/provider/dashboard";
-        }, 1200);
-        return;
-      }
-
       setIsLoading(true);
 
       try {
         const result = await verifyOtp({ email: userEmail, otp });
         setResetToken(result.resetToken);
         toast.success(result.message ?? "Verified!", { id: loadToast });
-        onResetSuccess();
+        onSuccess();
       } catch (error) {
         toast.error(getErrorMessage(error) || "Verification failed", {
           id: loadToast,
@@ -46,7 +32,7 @@ export function useVerifyOtp({
         setIsLoading(false);
       }
     },
-    [userEmail, nextStep, onResetSuccess],
+    [userEmail, onSuccess],
   );
 
   return { submitVerifyOtp, isLoading };

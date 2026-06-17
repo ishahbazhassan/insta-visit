@@ -9,6 +9,8 @@ import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import { SignupDto } from './dto/signup.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { BadRequestException } from '@nestjs/common';
+import { VerifyOtpDto } from './dto/verify-otp.dto';
 
 @Injectable()
 export class AuthService {
@@ -157,4 +159,48 @@ export class AuthService {
 
     return { message: successMessage };
   }
+
+  async verifyOtp(dto: VerifyOtpDto) {
+    const passwordReset = await this.prisma.passwordReset.findFirst({
+      where: {
+        otp: dto.otp,
+        used: false,
+        expiresAt: {
+          gt: new Date(),
+        },
+        user: {
+          email: dto.email,
+        },
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    if (!passwordReset) {
+      throw new BadRequestException('Invalid or expired OTP');
+    }
+
+    // Mark OTP as used (one-time use)
+    await this.prisma.passwordReset.update({
+      where: { id: passwordReset.id },
+      data: { used: true },
+    });
+
+    // Short-lived token for reset-password API (API 3)
+    const resetToken = this.jwtService.sign(
+      {
+        sub: passwordReset.user.id,
+        email: passwordReset.user.email,
+        purpose: 'password-reset',
+      },
+      { expiresIn: '15m' },
+    );
+
+    return {
+      message: 'OTP verified successfully',
+      resetToken,
+    };
+  }
+
 }

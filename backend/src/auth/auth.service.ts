@@ -1,10 +1,12 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { Role, UserStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import { SignupDto } from './dto/signup.dto';
@@ -37,6 +39,8 @@ export class AuthService {
         lastName: dto.lastName,
         email: dto.email,
         password: hashedPassword,
+        role: Role.PROVIDER,
+        status: UserStatus.ACTIVE,
         phone: dto.phone,
         npiNumber: dto.npiNumber,
         credentials: dto.credentials,
@@ -55,6 +59,8 @@ export class AuthService {
         firstName: true,
         lastName: true,
         email: true,
+        role: true,
+        status: true,
         phone: true,
         createdAt: true,
       },
@@ -81,9 +87,22 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
+    if (user.status === UserStatus.PENDING) {
+      throw new ForbiddenException(
+        'Your account is pending approval. Please wait for admin approval.',
+      );
+    }
+
+    if (user.status === UserStatus.INACTIVE) {
+      throw new ForbiddenException(
+        'Your account is inactive. Please contact support.',
+      );
+    }
+
     const accessToken = this.jwtService.sign({
       sub: user.id,
       email: user.email,
+      role: user.role,
     });
 
     return {
@@ -93,6 +112,8 @@ export class AuthService {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        role: user.role,
+        status: user.status,
       },
     };
   }
@@ -105,6 +126,8 @@ export class AuthService {
         firstName: true,
         lastName: true,
         email: true,
+        role: true,
+        status: true,
         phone: true,
         createdAt: true,
       },

@@ -1,8 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,28 +9,44 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id                    String   @id @default(uuid())
-  firstName             String
-  lastName              String
-  email                 String   @unique
-  password              String
-  phone                 String
-  npiNumber             String
-  credentials           String
-  licenseNumber         String
-  licenseExpirationDate String
-  licenseState          String
-  homeStreetAddress     String
-  homeCity              String
-  homeState             String
-  homeZipCode           String
-  practiceAddress       String
-  sameAsHomeAddress     Boolean  @default(false)
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+enum Role {
+  ADMIN
+  PROVIDER
+  PATIENT
+}
 
-  passwordResets        PasswordReset[]
+enum UserStatus {
+  PENDING
+  ACTIVE
+  INACTIVE
+}
+
+model User {
+  id        String     @id @default(uuid())
+  firstName String
+  lastName  String
+  email     String     @unique
+  password  String
+  role      Role       @default(PATIENT)
+  status    UserStatus @default(ACTIVE)
+
+  phone                 String?
+  npiNumber             String?
+  credentials           String?
+  licenseNumber         String?
+  licenseExpirationDate String?
+  licenseState          String?
+  homeStreetAddress     String?
+  homeCity              String?
+  homeState             String?
+  homeZipCode           String?
+  practiceAddress       String?
+  sameAsHomeAddress     Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  passwordResets PasswordReset[]
 }
 
 model PasswordReset {

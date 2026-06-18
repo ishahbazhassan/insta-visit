@@ -3,11 +3,11 @@
 import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import { login } from "../api/auth.api";
-import type { LoginPayload } from "../types/auth.types";
+import type { AuthUser, LoginPayload } from "../types/auth.types";
 import { getErrorMessage } from "@/lib/api";
 import { setAuthSession } from "../lib/session";
 
-export function useLogin(onSuccess: () => void) {
+export function useLogin(onSuccess: (user: AuthUser) => void) {
   const [isLoading, setIsLoading] = useState(false);
 
   const submitLogin = useCallback(
@@ -19,7 +19,7 @@ export function useLogin(onSuccess: () => void) {
         const result = await login(payload);
         setAuthSession(result.accessToken, result.user);
         toast.success("Logged in!", { id: loadToast });
-        onSuccess();
+        onSuccess(result.user);
       } catch (error) {
         toast.error(getErrorMessage(error) || "Login failed", { id: loadToast });
       } finally {

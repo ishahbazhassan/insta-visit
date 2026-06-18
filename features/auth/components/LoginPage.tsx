@@ -14,9 +14,14 @@ const LoginPage: React.FC = () => {
   const { control, handleSubmit } = useForm({
     defaultValues: { email: "", password: "" },
   });
-  const { submitLogin, isLoading } = useLogin(() =>
-    router.push("/provider/dashboard"),
-  );
+  const { submitLogin, isLoading } = useLogin((user) => {
+    if (user.role === "ADMIN") {
+      router.push("/admin/dashboard");
+      return;
+    }
+
+    router.push("/provider/dashboard");
+  });
 
   return (
     <>

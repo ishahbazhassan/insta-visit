@@ -3,11 +3,17 @@ export type LoginPayload = {
   password: string;
 };
 
+export type UserRole = "ADMIN" | "PROVIDER" | "PATIENT";
+
+export type UserStatus = "PENDING" | "ACTIVE" | "INACTIVE";
+
 export type AuthUser = {
   id: string;
   firstName: string;
   lastName: string;
   email: string;
+  role: UserRole;
+  status: UserStatus;
 };
 
 export type LoginResponse = {

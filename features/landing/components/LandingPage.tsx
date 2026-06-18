@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { isAuthenticated } from "@/features/auth/lib/session";
+import { getAuthUser, isAuthenticated } from "@/features/auth/lib/session";
 import FaqSection from "./faq/FaqSection";
 import LandingFooter from "./footer/LandingFooter";
 import LandingHeader from "./header/LandingHeader";
@@ -15,9 +15,17 @@ const LandingPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (isAuthenticated()) {
-      router.replace("/provider/dashboard");
+    if (!isAuthenticated()) {
+      return;
     }
+
+    const user = getAuthUser();
+    if (user?.role === "ADMIN") {
+      router.replace("/admin/dashboard");
+      return;
+    }
+
+    router.replace("/provider/dashboard");
   }, [router]);
 
   return (

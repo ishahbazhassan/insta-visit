@@ -9,12 +9,14 @@ import Button from "../../../app/components/ui/button/Button";
 import SelectField from "../../../app/components/ui/inputs/SelectField";
 import CheckboxField from "../../../app/components/ui/inputs/CheckboxField";
 import { AUTH_ROUTES } from "../constants/routes";
-import { useSignUp } from "../hooks/useSignUp";
+import type { ProviderRequestPayload } from "../types/auth.types";
+import { useProviderRequest } from "../hooks/useProviderRequest";
 
 const SignUpPage: React.FC = () => {
   const router = useRouter();
-  const { control, handleSubmit, watch, setValue } = useForm();
-  const { submitSignUp, isLoading } = useSignUp(() =>
+  const { control, handleSubmit, watch, setValue } =
+    useForm<ProviderRequestPayload>();
+  const { submitProviderRequest, isLoading } = useProviderRequest(() =>
     router.push(AUTH_ROUTES.login),
   );
 
@@ -49,8 +51,11 @@ const SignUpPage: React.FC = () => {
 
   return (
     <div className="max-h-[80vh] overflow-y-auto pr-2 custom-scrollbar">
-      <Heading title="Sign Up" className="mb-6 text-center" />
-      <form onSubmit={handleSubmit(submitSignUp)} className="flex flex-col gap-4">
+      <Heading title="Request Provider Access" className="mb-6 text-center" />
+      <form
+        onSubmit={handleSubmit(submitProviderRequest)}
+        className="flex flex-col gap-4"
+      >
         <div className="grid grid-cols-2 gap-4">
           <InputField
             label="First name"
@@ -75,22 +80,6 @@ const SignUpPage: React.FC = () => {
           type="email"
           control={control}
           placeholder="e.g. abc_john@email.com"
-          required
-        />
-        <InputField
-          label="Password"
-          name="password"
-          type="password"
-          control={control}
-          placeholder="Enter password"
-          required
-        />
-        <InputField
-          label="Confirm password"
-          name="confirmPassword"
-          type="password"
-          control={control}
-          placeholder="Re-enter password"
           required
         />
         <InputField

@@ -2,34 +2,23 @@
 
 import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
-import { signup } from "../api/auth.api";
-import type { SignUpFormValues } from "../types/auth.types";
+import { providerRequest } from "../api/auth.api";
+import type { ProviderRequestPayload } from "../types/auth.types";
 import { getErrorMessage } from "@/lib/api";
 
-export function useSignUp(onSuccess: () => void) {
+export function useProviderRequest(onSuccess: () => void) {
   const [isLoading, setIsLoading] = useState(false);
 
-  const submitSignUp = useCallback(
-    async (data: SignUpFormValues) => {
-      if (!data.password || data.password.length < 6) {
-        toast.error("Password must be at least 6 characters");
-        return;
-      }
-
-      if (data.password !== data.confirmPassword) {
-        toast.error("Passwords do not match");
-        return;
-      }
-
-      const loadToast = toast.loading("Creating account...");
+  const submitProviderRequest = useCallback(
+    async (data: ProviderRequestPayload) => {
+      const loadToast = toast.loading("Submitting request...");
       setIsLoading(true);
 
       try {
-        const result = await signup({
+        const result = await providerRequest({
           firstName: data.firstName,
           lastName: data.lastName,
           email: data.email,
-          password: data.password,
           phone: data.phone,
           npiNumber: data.npiNumber,
           credentials: data.credentials,
@@ -44,10 +33,15 @@ export function useSignUp(onSuccess: () => void) {
           sameAsHomeAddress: !!data.sameAsHomeAddress,
         });
 
-        toast.success(result.message ?? "Account created!", { id: loadToast });
+        toast.success(
+          result.message ?? "Request submitted! Awaiting admin approval.",
+          { id: loadToast },
+        );
         onSuccess();
       } catch (error) {
-        toast.error(getErrorMessage(error) || "Signup failed", { id: loadToast });
+        toast.error(getErrorMessage(error) || "Request failed", {
+          id: loadToast,
+        });
       } finally {
         setIsLoading(false);
       }
@@ -55,5 +49,5 @@ export function useSignUp(onSuccess: () => void) {
     [onSuccess],
   );
 
-  return { submitSignUp, isLoading };
+  return { submitProviderRequest, isLoading };
 }

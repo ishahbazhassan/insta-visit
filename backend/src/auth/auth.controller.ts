@@ -11,7 +11,7 @@ import {
 import type { Request } from 'express';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
-import { SignupDto } from './dto/signup.dto';
+import { ProviderRequestDto } from './dto/provider-request.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
@@ -28,10 +28,10 @@ type AuthenticatedRequest = Request & {
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('signup')
+  @Post('provider-request')
   @HttpCode(HttpStatus.CREATED)
-  signup(@Body() dto: SignupDto) {
-    return this.authService.signup(dto);
+  providerRequest(@Body() dto: ProviderRequestDto) {
+    return this.authService.providerRequest(dto);
   }
 
   @Post('login')

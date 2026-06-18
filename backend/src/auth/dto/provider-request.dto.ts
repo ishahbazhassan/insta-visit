@@ -6,7 +6,7 @@ import {
   MinLength,
 } from 'class-validator';
 
-export class SignupDto {
+export class ProviderRequestDto {
   @IsString()
   @MinLength(2)
   firstName!: string;
@@ -17,10 +17,6 @@ export class SignupDto {
 
   @IsEmail()
   email!: string;
-
-  @IsString()
-  @MinLength(6)
-  password!: string;
 
   @IsString()
   phone!: string;

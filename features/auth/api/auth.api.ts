@@ -6,8 +6,8 @@ import type {
   LoginResponse,
   ResetPasswordPayload,
   ResetPasswordResponse,
-  SignUpPayload,
-  SignUpResponse,
+  ProviderRequestPayload,
+  ProviderRequestResponse,
   VerifyOtpPayload,
   VerifyOtpResponse,
 } from "../types/auth.types";
@@ -17,8 +17,13 @@ export async function login(payload: LoginPayload): Promise<LoginResponse> {
   return data;
 }
 
-export async function signup(payload: SignUpPayload): Promise<SignUpResponse> {
-  const { data } = await api.post<SignUpResponse>("/auth/signup", payload);
+export async function providerRequest(
+  payload: ProviderRequestPayload,
+): Promise<ProviderRequestResponse> {
+  const { data } = await api.post<ProviderRequestResponse>(
+    "/auth/provider-request",
+    payload,
+  );
   return data;
 }
 

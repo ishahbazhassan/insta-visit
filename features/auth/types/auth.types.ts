@@ -21,11 +21,10 @@ export type LoginResponse = {
   user: AuthUser;
 };
 
-export type SignUpPayload = {
+export type ProviderRequestPayload = {
   firstName: string;
   lastName: string;
   email: string;
-  password: string;
   phone: string;
   npiNumber: string;
   credentials: string;
@@ -40,18 +39,16 @@ export type SignUpPayload = {
   sameAsHomeAddress?: boolean;
 };
 
-export type SignUpFormValues = SignUpPayload & {
-  confirmPassword: string;
-};
-
-export type SignUpResponse = {
+export type ProviderRequestResponse = {
   message: string;
   user: {
     id: string;
     firstName: string;
     lastName: string;
     email: string;
-    phone: string;
+    role: UserRole;
+    status: UserStatus;
+    phone: string | null;
     createdAt: string;
   };
 };

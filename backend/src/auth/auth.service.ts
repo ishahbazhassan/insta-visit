@@ -9,7 +9,7 @@ import * as bcrypt from 'bcrypt';
 import { Role, UserStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
-import { SignupDto } from './dto/signup.dto';
+import { ProviderRequestDto } from './dto/provider-request.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { BadRequestException } from '@nestjs/common';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
@@ -22,25 +22,31 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signup(dto: SignupDto) {
+  async providerRequest(dto: ProviderRequestDto) {
     const existingUser = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
 
     if (existingUser) {
+      if (
+        existingUser.role === Role.PROVIDER &&
+        existingUser.status === UserStatus.PENDING
+      ) {
+        throw new ConflictException(
+          'A provider request with this email is already pending approval',
+        );
+      }
+
       throw new ConflictException('Email is already registered');
     }
-
-    const hashedPassword = await bcrypt.hash(dto.password, 10);
 
     const user = await this.prisma.user.create({
       data: {
         firstName: dto.firstName,
         lastName: dto.lastName,
         email: dto.email,
-        password: hashedPassword,
         role: Role.PROVIDER,
-        status: UserStatus.ACTIVE,
+        status: UserStatus.PENDING,
         phone: dto.phone,
         npiNumber: dto.npiNumber,
         credentials: dto.credentials,
@@ -67,7 +73,7 @@ export class AuthService {
     });
 
     return {
-      message: 'Account created successfully',
+      message: 'Provider request submitted successfully. Awaiting admin approval.',
       user,
     };
   }
@@ -79,6 +85,12 @@ export class AuthService {
 
     if (!user) {
       throw new UnauthorizedException('Invalid email or password');
+    }
+
+    if (!user.password) {
+      throw new ForbiddenException(
+        'Your account is pending approval. Please wait for admin approval.',
+      );
     }
 
     const isPasswordValid = await bcrypt.compare(dto.password, user.password);

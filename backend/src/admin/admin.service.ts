@@ -39,4 +39,37 @@ export class AdminService {
       total: providers.length,
     };
   }
+
+  async findProviderRequests() {
+    const requests = await this.prisma.user.findMany({
+      where: {
+        role: Role.PROVIDER,
+        status: UserStatus.PENDING,
+      },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        phone: true,
+        credentials: true,
+        status: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return {
+      requests: requests.map((request) => ({
+        id: request.id,
+        name: `${request.firstName} ${request.lastName}`.trim(),
+        email: request.email,
+        phone: request.phone,
+        education: request.credentials,
+        status: request.status.toLowerCase(),
+        createdAt: request.createdAt,
+      })),
+      total: requests.length,
+    };
+  }
 }

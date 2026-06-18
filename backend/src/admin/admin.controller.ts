@@ -12,4 +12,9 @@ export class AdminController {
   findApprovedProviders() {
     return this.adminService.findApprovedProviders();
   }
+
+  @Get('provider-requests')
+  findProviderRequests() {
+    return this.adminService.findProviderRequests();
+  }
 }

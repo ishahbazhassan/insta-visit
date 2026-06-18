@@ -1,5 +1,21 @@
 import type { StatusBadgeVariant } from "@/app/components/ui/badges/StatusBadge";
 
+export type ApprovedProviderApiItem = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  education: string | null;
+  patientsAttended: number;
+  status: string;
+  createdAt: string;
+};
+
+export type ApprovedProvidersResponse = {
+  providers: ApprovedProviderApiItem[];
+  total: number;
+};
+
 export type ProviderListItem = {
   id: string;
   name: string;

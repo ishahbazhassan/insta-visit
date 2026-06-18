@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import {
   HiOutlineBookOpen,
@@ -25,6 +25,11 @@ const ProvidersTable = ({ providers }: ProvidersTableProps) => {
   const [rows, setRows] = useState(providers);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+
+  useEffect(() => {
+    setRows(providers);
+    setCurrentPage(1);
+  }, [providers]);
 
   const totalItems = rows.length;
   const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));

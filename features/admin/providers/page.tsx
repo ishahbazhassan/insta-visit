@@ -6,25 +6,26 @@ import Button from "@/app/components/ui/button/Button";
 import SearchInput from "@/app/components/ui/inputs/SearchInput";
 import AdminContentCard from "../components/layout/AdminContentCard";
 import ProvidersTable from "../components/providers/ProvidersTable";
-import { MOCK_PROVIDERS } from "../data/mock-providers";
+import { useApprovedProviders } from "../hooks/useApprovedProviders";
 
 const AllProvidersPage = () => {
   const [search, setSearch] = useState("");
+  const { providers, isLoading, error } = useApprovedProviders();
 
   const filteredProviders = useMemo(() => {
     const query = search.trim().toLowerCase();
 
     if (!query) {
-      return MOCK_PROVIDERS;
+      return providers;
     }
 
-    return MOCK_PROVIDERS.filter(
+    return providers.filter(
       (provider) =>
         provider.name.toLowerCase().includes(query) ||
         provider.email.toLowerCase().includes(query) ||
         provider.phone.toLowerCase().includes(query),
     );
-  }, [search]);
+  }, [providers, search]);
 
   return (
     <AdminContentCard
@@ -48,7 +49,13 @@ const AllProvidersPage = () => {
         </div>
       }
     >
-      <ProvidersTable providers={filteredProviders} />
+      {isLoading ? (
+        <p className="text-sm text-gray-500">Loading providers...</p>
+      ) : error ? (
+        <p className="text-sm text-red-500">{error}</p>
+      ) : (
+        <ProvidersTable providers={filteredProviders} />
+      )}
     </AdminContentCard>
   );
 };

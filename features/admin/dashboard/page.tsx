@@ -1,6 +1,7 @@
 "use client";
 
 import { getAuthUser } from "@/features/auth/lib/session";
+import AdminContentCard from "../components/layout/AdminContentCard";
 
 const AdminDashboard = () => {
   const user = getAuthUser();
@@ -10,17 +11,16 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-[#0A1E25]">
-          Welcome, {user.firstName}
-        </h1>
-        <p className="mt-1 text-sm text-gray-500">Admin Dashboard</p>
-      </div>
+    <AdminContentCard title="Dashboard">
+      <div className="space-y-6">
+        <div>
+          <h3 className="text-lg font-semibold text-[#0A1E25]">
+            Welcome, {user.firstName}
+          </h3>
+          <p className="mt-1 text-sm text-gray-500">Admin Dashboard</p>
+        </div>
 
-      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-[#0A1E25]">Admin account</h2>
-        <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+        <dl className="grid gap-3 text-sm sm:grid-cols-2">
           <div>
             <dt className="text-gray-500">Name</dt>
             <dd className="font-medium text-[#0A1E25]">
@@ -41,11 +41,7 @@ const AdminDashboard = () => {
           </div>
         </dl>
       </div>
-
-      <p className="text-sm text-gray-500">
-        Provider request approval flow will be added in the next step.
-      </p>
-    </div>
+    </AdminContentCard>
   );
 };
 

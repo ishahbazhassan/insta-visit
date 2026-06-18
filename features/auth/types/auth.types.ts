@@ -5,7 +5,7 @@ export type LoginPayload = {
 
 export type UserRole = "ADMIN" | "PROVIDER" | "PATIENT";
 
-export type UserStatus = "PENDING" | "ACTIVE" | "INACTIVE";
+export type UserStatus = "PENDING" | "ACTIVE" | "INACTIVE" | "REJECTED";
 
 export type AuthUser = {
   id: string;

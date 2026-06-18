@@ -105,6 +105,12 @@ export class AuthService {
       );
     }
 
+    if (user.status === UserStatus.REJECTED) {
+      throw new ForbiddenException(
+        'Your provider request was declined. Please contact support.',
+      );
+    }
+
     if (user.status === UserStatus.INACTIVE) {
       throw new ForbiddenException(
         'Your account is inactive. Please contact support.',

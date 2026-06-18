@@ -19,6 +19,7 @@ enum UserStatus {
   PENDING
   ACTIVE
   INACTIVE
+  REJECTED
 }
 
 model User {

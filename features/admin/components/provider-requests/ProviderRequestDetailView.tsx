@@ -1,15 +1,22 @@
 "use client";
 
-import toast from "react-hot-toast";
 import Button from "@/app/components/ui/button/Button";
 import ReadOnlyField from "@/app/components/ui/fields/ReadOnlyField";
 import type { ProviderRequestDetail } from "../../types/provider.types";
 
 type ProviderRequestDetailViewProps = {
   request: ProviderRequestDetail;
+  isSubmitting?: boolean;
+  onApprove: () => void;
+  onReject: () => void;
 };
 
-const ProviderRequestDetailView = ({ request }: ProviderRequestDetailViewProps) => {
+const ProviderRequestDetailView = ({
+  request,
+  isSubmitting = false,
+  onApprove,
+  onReject,
+}: ProviderRequestDetailViewProps) => {
   const fullName = `${request.firstName} ${request.lastName}`.trim();
 
   return (
@@ -57,10 +64,9 @@ const ProviderRequestDetailView = ({ request }: ProviderRequestDetailViewProps) 
         <div className="mt-8 flex justify-end gap-4">
           <button
             type="button"
-            onClick={() =>
-              toast("Decline API will be connected in the next step")
-            }
-            className="px-4 py-2 text-sm font-semibold text-[#EF4444] transition-opacity hover:opacity-80"
+            onClick={onReject}
+            disabled={isSubmitting}
+            className="px-4 py-2 text-sm font-semibold text-[#EF4444] transition-opacity hover:opacity-80 disabled:opacity-50"
           >
             Decline
           </button>
@@ -69,9 +75,8 @@ const ProviderRequestDetailView = ({ request }: ProviderRequestDetailViewProps) 
             label="Approve"
             width="w-auto"
             className="px-8"
-            onClick={() =>
-              toast("Approve API will be connected in the next step")
-            }
+            disabled={isSubmitting}
+            onClick={onApprove}
           />
         </div>
       ) : null}

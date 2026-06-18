@@ -16,6 +16,45 @@ export type ApprovedProvidersResponse = {
   total: number;
 };
 
+export type ProviderRequestApiItem = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  education: string | null;
+  status: "pending" | "decline";
+  createdAt: string;
+};
+
+export type ProviderRequestsResponse = {
+  requests: ProviderRequestApiItem[];
+  total: number;
+};
+
+export type ProviderRequestDetailResponse = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string | null;
+  npiNumber: string | null;
+  credentials: string | null;
+  licenseNumber: string | null;
+  licenseExpirationDate: string | null;
+  licenseState: string | null;
+  homeStreetAddress: string | null;
+  homeCity: string | null;
+  homeState: string | null;
+  homeZipCode: string | null;
+  practiceAddress: string | null;
+  status: "pending" | "decline";
+  createdAt: string;
+};
+
+export type ProviderActionResponse = {
+  message: string;
+};
+
 export type ProviderListItem = {
   id: string;
   name: string;

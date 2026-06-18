@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { HiOutlineDocumentText } from "react-icons/hi";
 import DataTable, {
   type DataTableColumn,
@@ -17,6 +17,10 @@ type ProviderRequestsTableProps = {
 const ProviderRequestsTable = ({ requests }: ProviderRequestsTableProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [requests]);
 
   const totalItems = requests.length;
   const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));

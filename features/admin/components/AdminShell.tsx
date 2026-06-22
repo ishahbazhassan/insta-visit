@@ -9,7 +9,7 @@ type AdminShellProps = {
 };
 
 const AdminShell = ({ children }: AdminShellProps) => {
-  const { user, isLoading } = useAdminAuth();
+  const { user, isLoading, logout } = useAdminAuth();
 
   if (isLoading) {
     return (
@@ -26,7 +26,9 @@ const AdminShell = ({ children }: AdminShellProps) => {
   return (
     <>
       <Toaster position="top-center" />
-      <AdminLayout user={user}>{children}</AdminLayout>
+      <AdminLayout user={user} onLogout={logout}>
+        {children}
+      </AdminLayout>
     </>
   );
 };

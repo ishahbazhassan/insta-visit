@@ -2,14 +2,16 @@
 
 import { usePathname } from "next/navigation";
 import { HiOutlineMail } from "react-icons/hi";
+import Button from "@/app/components/ui/button/Button";
 import { getAdminBreadcrumb, getAdminPageTitle } from "../../constants/navigation";
 import type { AuthUser } from "@/features/auth/types/auth.types";
 
 type AdminHeaderProps = {
   user: AuthUser;
+  onLogout: () => void;
 };
 
-const AdminHeader = ({ user }: AdminHeaderProps) => {
+const AdminHeader = ({ user, onLogout }: AdminHeaderProps) => {
   const pathname = usePathname();
   const pageTitle = getAdminPageTitle(pathname);
   const breadcrumb = getAdminBreadcrumb(pathname);
@@ -37,10 +39,23 @@ const AdminHeader = ({ user }: AdminHeaderProps) => {
           <HiOutlineMail size={22} />
         </button>
 
-        <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-gray-200 bg-[#EBE5F1] text-sm font-semibold text-[#705295]">
-          {user.firstName.charAt(0)}
-          {user.lastName.charAt(0)}
+        <div className="hidden items-center gap-3 sm:flex">
+          <span className="text-sm text-gray-600">
+            {user.firstName} {user.lastName}
+          </span>
+          <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-gray-200 bg-[#EBE5F1] text-sm font-semibold text-[#705295]">
+            {user.firstName.charAt(0)}
+            {user.lastName.charAt(0)}
+          </div>
         </div>
+
+        <Button
+          type="button"
+          label="Logout"
+          width="w-auto"
+          className="px-5"
+          onClick={onLogout}
+        />
       </div>
     </header>
   );

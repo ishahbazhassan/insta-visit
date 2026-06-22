@@ -19,9 +19,15 @@ import type { ProviderListItem } from "../../types/provider.types";
 
 type ProvidersTableProps = {
   providers: ProviderListItem[];
+  updatingProviderId?: string | null;
+  onToggleStatus: (id: string, isActive: boolean) => Promise<void>;
 };
 
-const ProvidersTable = ({ providers }: ProvidersTableProps) => {
+const ProvidersTable = ({
+  providers,
+  updatingProviderId = null,
+  onToggleStatus,
+}: ProvidersTableProps) => {
   const [rows, setRows] = useState(providers);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -84,20 +90,10 @@ const ProvidersTable = ({ providers }: ProvidersTableProps) => {
         <div className="flex items-center gap-3">
           <ToggleSwitch
             checked={row.isActive}
+            disabled={updatingProviderId === row.id}
             ariaLabel={`Toggle ${row.name} status`}
             onChange={(checked) => {
-              setRows((current) =>
-                current.map((item) =>
-                  item.id === row.id
-                    ? {
-                        ...item,
-                        isActive: checked,
-                        status: checked ? "active" : "inactive",
-                      }
-                    : item,
-                ),
-              );
-              toast.success("Status updated (UI only)");
+              void onToggleStatus(row.id, checked);
             }}
           />
           <button

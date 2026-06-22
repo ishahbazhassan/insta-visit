@@ -37,7 +37,7 @@ export class AdminService {
     const providers = await this.prisma.user.findMany({
       where: {
         role: Role.PROVIDER,
-        status: UserStatus.ACTIVE,
+        status: { in: [UserStatus.ACTIVE, UserStatus.INACTIVE] },
       },
       select: {
         id: true,
@@ -168,6 +168,45 @@ export class AdminService {
     };
   }
 
+  async updateProviderStatus(id: string, status: 'ACTIVE' | 'INACTIVE') {
+    const provider = await this.findManagedProviderOrThrow(id);
+    const nextStatus =
+      status === 'ACTIVE' ? UserStatus.ACTIVE : UserStatus.INACTIVE;
+
+    if (provider.status === nextStatus) {
+      return {
+        message: `Provider is already ${status.toLowerCase()}`,
+        user: {
+          id: provider.id,
+          email: provider.email,
+          firstName: provider.firstName,
+          lastName: provider.lastName,
+          status: provider.status,
+        },
+      };
+    }
+
+    const user = await this.prisma.user.update({
+      where: { id: provider.id },
+      data: { status: nextStatus },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        status: true,
+      },
+    });
+
+    return {
+      message:
+        nextStatus === UserStatus.ACTIVE
+          ? 'Provider activated successfully'
+          : 'Provider deactivated successfully',
+      user,
+    };
+  }
+
   private mapRequestStatus(status: UserStatus): 'pending' | 'decline' {
     return status === UserStatus.REJECTED ? 'decline' : 'pending';
   }
@@ -214,5 +253,30 @@ export class AdminService {
     }
 
     return request;
+  }
+
+  private async findManagedProviderOrThrow(id: string) {
+    const provider = await this.prisma.user.findUnique({
+      where: { id },
+    });
+
+    if (!provider) {
+      throw new NotFoundException('Provider not found');
+    }
+
+    if (provider.role !== Role.PROVIDER) {
+      throw new BadRequestException('User is not a provider');
+    }
+
+    if (
+      provider.status !== UserStatus.ACTIVE &&
+      provider.status !== UserStatus.INACTIVE
+    ) {
+      throw new BadRequestException(
+        'Only approved providers can be activated or deactivated',
+      );
+    }
+
+    return provider;
   }
 }

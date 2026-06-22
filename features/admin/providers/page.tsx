@@ -10,7 +10,8 @@ import { useApprovedProviders } from "../hooks/useApprovedProviders";
 
 const AllProvidersPage = () => {
   const [search, setSearch] = useState("");
-  const { providers, isLoading, error } = useApprovedProviders();
+  const { providers, isLoading, error, updatingProviderId, toggleProviderStatus } =
+    useApprovedProviders();
 
   const filteredProviders = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -54,7 +55,11 @@ const AllProvidersPage = () => {
       ) : error ? (
         <p className="text-sm text-red-500">{error}</p>
       ) : (
-        <ProvidersTable providers={filteredProviders} />
+        <ProvidersTable
+          providers={filteredProviders}
+          updatingProviderId={updatingProviderId}
+          onToggleStatus={toggleProviderStatus}
+        />
       )}
     </AdminContentCard>
   );

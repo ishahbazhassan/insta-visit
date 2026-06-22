@@ -55,6 +55,17 @@ export type ProviderActionResponse = {
   message: string;
 };
 
+export type UpdateProviderStatusResponse = {
+  message: string;
+  user: {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    status: string;
+  };
+};
+
 export type ProviderListItem = {
   id: string;
   name: string;

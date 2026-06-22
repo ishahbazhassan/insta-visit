@@ -4,6 +4,7 @@ import type {
   ProviderActionResponse,
   ProviderRequestDetailResponse,
   ProviderRequestsResponse,
+  UpdateProviderStatusResponse,
 } from "../types/provider.types";
 
 export async function fetchApprovedProviders(): Promise<ApprovedProvidersResponse> {
@@ -41,6 +42,17 @@ export async function rejectProviderRequest(
 ): Promise<ProviderActionResponse> {
   const { data } = await api.post<ProviderActionResponse>(
     `/admin/provider-requests/${id}/reject`,
+  );
+  return data;
+}
+
+export async function updateProviderStatus(
+  id: string,
+  status: "ACTIVE" | "INACTIVE",
+): Promise<UpdateProviderStatusResponse> {
+  const { data } = await api.patch<UpdateProviderStatusResponse>(
+    `/admin/providers/${id}/status`,
+    { status },
   );
   return data;
 }

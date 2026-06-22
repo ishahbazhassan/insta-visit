@@ -2,6 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {
+  PORTAL_SIDEBAR_MIN_HEIGHT,
+  PORTAL_SIDEBAR_WIDTH,
+} from "@/lib/portal-layout";
 import { PROVIDER_LINKS } from "../../constants/navigation";
 
 const ProviderSidebar = () => {
@@ -11,7 +15,13 @@ const ProviderSidebar = () => {
     pathname === path || pathname.startsWith(`${path}/`);
 
   return (
-    <aside className="relative z-20 flex h-full w-[102px] shrink-0 flex-col items-center border-r border-gray-100 bg-white">
+    <aside
+      className="relative z-20 flex shrink-0 flex-col items-center self-stretch border-r border-gray-100 bg-white"
+      style={{
+        width: PORTAL_SIDEBAR_WIDTH,
+        minHeight: PORTAL_SIDEBAR_MIN_HEIGHT,
+      }}
+    >
       <style>{`
         aside nav::-webkit-scrollbar { display: none; }
         aside nav { -ms-overflow-style: none; scrollbar-width: none; }

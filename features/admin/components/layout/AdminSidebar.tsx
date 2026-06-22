@@ -1,18 +1,16 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { HiOutlineBell, HiOutlineChevronDown, HiOutlineChevronUp } from "react-icons/hi";
+import { HiOutlineChevronDown, HiOutlineChevronUp } from "react-icons/hi";
+import {
+  PORTAL_SIDEBAR_MIN_HEIGHT,
+  PORTAL_SIDEBAR_WIDTH,
+} from "@/lib/portal-layout";
 import { ADMIN_NAV_ITEMS } from "../../constants/navigation";
-import type { AuthUser } from "@/features/auth/types/auth.types";
 
-type AdminSidebarProps = {
-  user: AuthUser;
-};
-
-const AdminSidebar = ({ user }: AdminSidebarProps) => {
+const AdminSidebar = () => {
   const pathname = usePathname();
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
 
@@ -42,70 +40,73 @@ const AdminSidebar = ({ user }: AdminSidebarProps) => {
     pathname === path || pathname.startsWith(`${path}/`);
 
   return (
-    <aside className="flex h-screen w-[280px] shrink-0 flex-col border-r border-gray-100 bg-white">
-      <div className="flex h-[80px] items-center px-6">
-        <Image
-          src="/assets/icons/instaVisit.svg"
-          alt="InstaVisitRx+"
-          width={160}
-          height={36}
-          priority
-        />
-      </div>
+    <aside
+      className="relative z-20 flex shrink-0 self-stretch flex-col border-r border-gray-100 bg-white"
+      style={{
+        width: PORTAL_SIDEBAR_WIDTH,
+        minHeight: PORTAL_SIDEBAR_MIN_HEIGHT,
+      }}
+    >
+      <style>{`
+        aside nav::-webkit-scrollbar { display: none; }
+        aside nav { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
 
-      <nav className="flex-1 overflow-y-auto px-4 py-2">
-        <ul className="space-y-1">
-          {ADMIN_NAV_ITEMS.map((item) => {
-            const Icon = item.icon;
-            const hasChildren = Boolean(item.children?.length);
-            const isExpanded = expandedSections.includes(item.label);
-            const isActive = item.path ? isPathActive(item.path) : false;
-            const isChildActive = item.children?.some((child) =>
-              isPathActive(child.path),
-            );
+      <nav className="scrollbar-hide flex min-h-0 w-full flex-1 flex-col gap-8 overflow-y-auto px-1 py-6">
+        {ADMIN_NAV_ITEMS.map((item) => {
+          const Icon = item.icon;
+          const hasChildren = Boolean(item.children?.length);
+          const isExpanded = expandedSections.includes(item.label);
+          const isActive = item.path ? isPathActive(item.path) : false;
+          const isChildActive = item.children?.some((child) =>
+            isPathActive(child.path),
+          );
 
-            if (!hasChildren && item.path) {
-              return (
-                <li key={item.label}>
-                  <Link
-                    href={item.path}
-                    className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors ${
-                      isActive
-                        ? "bg-[#EBE5F1] text-[#705295]"
-                        : "text-[#666666] hover:bg-gray-50 hover:text-[#705295]"
-                    }`}
-                  >
-                    <Icon size={20} />
-                    {item.label}
-                  </Link>
-                </li>
-              );
-            }
-
+          if (!hasChildren && item.path) {
             return (
-              <li key={item.label}>
-                <button
-                  type="button"
-                  onClick={() => toggleSection(item.label)}
-                  className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm font-medium transition-colors ${
-                    isChildActive
+              <div key={item.label} className="flex w-full flex-col items-center">
+                <Link
+                  href={item.path}
+                  className={`flex w-full flex-col items-center gap-1 transition-colors ${
+                    isActive
                       ? "text-[#705295]"
-                      : "text-[#666666] hover:bg-gray-50 hover:text-[#705295]"
+                      : "text-[#999999] hover:text-[#705295]"
                   }`}
                 >
-                  <span className="flex items-center gap-3">
-                    <Icon size={20} />
+                  <Icon size={28} />
+                  <span className="px-1 text-center text-[12px] font-medium leading-tight">
                     {item.label}
                   </span>
-                  {isExpanded ? (
-                    <HiOutlineChevronUp size={16} />
-                  ) : (
-                    <HiOutlineChevronDown size={16} />
-                  )}
-                </button>
+                </Link>
+              </div>
+            );
+          }
 
-                {isExpanded && item.children ? (
-                  <ul className="mt-1 space-y-1 pl-8">
+          return (
+            <div key={item.label} className="flex w-full flex-col items-center">
+              <button
+                type="button"
+                onClick={() => toggleSection(item.label)}
+                className={`flex w-full flex-col items-center gap-1 transition-colors ${
+                  isChildActive
+                    ? "text-[#705295]"
+                    : "text-[#999999] hover:text-[#705295]"
+                }`}
+              >
+                <Icon size={28} />
+                <span className="px-1 text-center text-[12px] font-medium leading-tight">
+                  {item.label}
+                </span>
+                {isExpanded ? (
+                  <HiOutlineChevronUp size={14} />
+                ) : (
+                  <HiOutlineChevronDown size={14} />
+                )}
+              </button>
+
+              {isExpanded && item.children ? (
+                <div className="mt-2 w-full rounded-lg bg-[#F5F5F5] px-2 py-2">
+                  <ul className="space-y-2">
                     {item.children.map((child) => {
                       const childActive = isPathActive(child.path);
 
@@ -113,10 +114,10 @@ const AdminSidebar = ({ user }: AdminSidebarProps) => {
                         <li key={child.path}>
                           <Link
                             href={child.path}
-                            className={`block rounded-lg px-3 py-2 text-sm transition-colors ${
+                            className={`block text-center text-[11px] leading-snug transition-colors ${
                               childActive
                                 ? "font-semibold text-[#705295]"
-                                : "text-[#999999] hover:text-[#705295]"
+                                : "text-[#666666] hover:text-[#705295]"
                             }`}
                           >
                             {child.label}
@@ -125,30 +126,12 @@ const AdminSidebar = ({ user }: AdminSidebarProps) => {
                       );
                     })}
                   </ul>
-                ) : null}
-              </li>
-            );
-          })}
-        </ul>
+                </div>
+              ) : null}
+            </div>
+          );
+        })}
       </nav>
-
-      <div className="border-t border-gray-100 px-6 py-5">
-        <div className="flex items-center justify-between">
-          <button
-            type="button"
-            aria-label="Notifications"
-            className="relative flex h-10 w-10 items-center justify-center rounded-full text-[#705295] hover:bg-[#EBE5F1]"
-          >
-            <HiOutlineBell size={22} />
-            <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500" />
-          </button>
-
-          <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-[#EBE5F1] text-sm font-semibold text-[#705295]">
-            {user.firstName.charAt(0)}
-            {user.lastName.charAt(0)}
-          </div>
-        </div>
-      </div>
     </aside>
   );
 };

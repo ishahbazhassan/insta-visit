@@ -1,0 +1,4 @@
+export const PORTAL_HEADER_HEIGHT = 80;
+export const PORTAL_SIDEBAR_WIDTH = 120;
+
+export const PORTAL_SIDEBAR_MIN_HEIGHT = `calc(100vh - ${PORTAL_HEADER_HEIGHT}px)`;

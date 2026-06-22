@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { LuClock } from "react-icons/lu";
+import { PORTAL_HEADER_HEIGHT } from "@/lib/portal-layout";
 import type { AuthUser } from "@/features/auth/types/auth.types";
 
 type ProviderNavbarProps = {
@@ -15,8 +16,9 @@ const ProviderNavbar = ({ user }: ProviderNavbarProps) => {
 
   return (
     <header
-      className="sticky top-0 z-10 flex h-[80px] w-full items-center justify-between border-b border-gray-100 px-8 transition-all"
+      className="sticky top-0 z-10 flex w-full items-center justify-between border-b border-gray-100 px-8 transition-all"
       style={{
+        height: PORTAL_HEADER_HEIGHT,
         boxShadow: "0px 2px 14px 0px #00000021",
         backgroundColor: "rgba(255, 255, 255, 0.8)",
         backdropFilter: "blur(12px)",

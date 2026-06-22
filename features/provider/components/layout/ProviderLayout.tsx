@@ -14,7 +14,7 @@ const ProviderLayout = ({ user, children }: ProviderLayoutProps) => {
     <div className="flex min-h-screen flex-col bg-[#F9F9F9]">
       <ProviderNavbar user={user} />
 
-      <div className="flex flex-1">
+      <div className="flex min-h-0 flex-1 items-stretch">
         <ProviderSidebar />
         <main className="flex-1 overflow-y-auto p-6">{children}</main>
       </div>

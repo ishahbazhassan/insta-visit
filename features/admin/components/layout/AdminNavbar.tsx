@@ -1,33 +1,36 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import Image from "next/image";
 import { HiOutlineMail } from "react-icons/hi";
 import Button from "@/app/components/ui/button/Button";
-import { getAdminBreadcrumb, getAdminPageTitle } from "../../constants/navigation";
+import { PORTAL_HEADER_HEIGHT } from "@/lib/portal-layout";
 import type { AuthUser } from "@/features/auth/types/auth.types";
 
-type AdminHeaderProps = {
+type AdminNavbarProps = {
   user: AuthUser;
   onLogout: () => void;
 };
 
-const AdminHeader = ({ user, onLogout }: AdminHeaderProps) => {
-  const pathname = usePathname();
-  const pageTitle = getAdminPageTitle(pathname);
-  const breadcrumb = getAdminBreadcrumb(pathname);
-
+const AdminNavbar = ({ user, onLogout }: AdminNavbarProps) => {
   return (
     <header
-      className="sticky top-0 z-10 flex min-h-[80px] items-center justify-between border-b border-gray-100 bg-white px-8"
+      className="sticky top-0 z-10 flex w-full items-center justify-between border-b border-gray-100 px-8 transition-all"
       style={{
+        height: PORTAL_HEADER_HEIGHT,
         boxShadow: "0px 2px 14px 0px #00000021",
+        backgroundColor: "rgba(255, 255, 255, 0.8)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
       }}
     >
-      <div>
-        <h1 className="text-2xl font-bold text-[#0A1E25]">{pageTitle}</h1>
-        {breadcrumb ? (
-          <p className="mt-1 text-sm text-[#999999]">{breadcrumb}</p>
-        ) : null}
+      <div className="flex items-center">
+        <Image
+          src="/assets/icons/instaVisit.svg"
+          alt="InstaVisitRx+"
+          width={180}
+          height={40}
+          priority
+        />
       </div>
 
       <div className="flex items-center gap-4">
@@ -61,4 +64,4 @@ const AdminHeader = ({ user, onLogout }: AdminHeaderProps) => {
   );
 };
 
-export default AdminHeader;
+export default AdminNavbar;

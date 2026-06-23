@@ -1,5 +1,6 @@
 "use client";
 
+import { Toaster } from "react-hot-toast";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { AUTH_ROUTES } from "@/features/auth/constants/routes";
 import { useRouter } from "next/navigation";
@@ -12,7 +13,7 @@ type ProviderShellProps = {
 
 const ProviderShell = ({ children }: ProviderShellProps) => {
   const router = useRouter();
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, logout } = useAuth();
 
   useEffect(() => {
     if (!isLoading && user && user.role !== "PROVIDER") {
@@ -36,7 +37,14 @@ const ProviderShell = ({ children }: ProviderShellProps) => {
     return null;
   }
 
-  return <ProviderLayout user={user}>{children}</ProviderLayout>;
+  return (
+    <>
+      <Toaster position="top-center" />
+      <ProviderLayout user={user} onLogout={logout}>
+        {children}
+      </ProviderLayout>
+    </>
+  );
 };
 
 export default ProviderShell;

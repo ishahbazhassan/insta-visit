@@ -1,17 +1,18 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
+import ProfileMenu from "@/app/components/ui/profile/ProfileMenu";
 import { LuClock } from "react-icons/lu";
 import { PORTAL_HEADER_HEIGHT } from "@/lib/portal-layout";
 import type { AuthUser } from "@/features/auth/types/auth.types";
 
 type ProviderNavbarProps = {
   user: AuthUser;
+  onLogout: () => void;
 };
 
-const ProviderNavbar = ({ user }: ProviderNavbarProps) => {
+const ProviderNavbar = ({ user, onLogout }: ProviderNavbarProps) => {
   const [isAvailable, setIsAvailable] = useState(true);
 
   return (
@@ -62,16 +63,11 @@ const ProviderNavbar = ({ user }: ProviderNavbarProps) => {
           </button>
         </div>
 
-        <Link
-          href="/provider/settings"
-          className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-gray-200 transition-all hover:bg-gray-50"
-          title={`${user.firstName} ${user.lastName}`}
-        >
-          <div className="flex h-full w-full items-center justify-center bg-[#EBE5F1] text-sm font-semibold text-[#705295]">
-            {user.firstName.charAt(0)}
-            {user.lastName.charAt(0)}
-          </div>
-        </Link>
+        <ProfileMenu
+          user={user}
+          profileHref="/provider/settings"
+          onLogout={onLogout}
+        />
       </div>
     </header>
   );

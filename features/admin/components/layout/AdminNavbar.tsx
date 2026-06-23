@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { HiOutlineMail } from "react-icons/hi";
-import Button from "@/app/components/ui/button/Button";
+import ProfileMenu from "@/app/components/ui/profile/ProfileMenu";
 import { PORTAL_HEADER_HEIGHT } from "@/lib/portal-layout";
 import type { AuthUser } from "@/features/auth/types/auth.types";
 
@@ -42,23 +42,7 @@ const AdminNavbar = ({ user, onLogout }: AdminNavbarProps) => {
           <HiOutlineMail size={22} />
         </button>
 
-        <div className="hidden items-center gap-3 sm:flex">
-          <span className="text-sm text-gray-600">
-            {user.firstName} {user.lastName}
-          </span>
-          <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-gray-200 bg-[#EBE5F1] text-sm font-semibold text-[#705295]">
-            {user.firstName.charAt(0)}
-            {user.lastName.charAt(0)}
-          </div>
-        </div>
-
-        <Button
-          type="button"
-          label="Logout"
-          width="w-auto"
-          className="px-5"
-          onClick={onLogout}
-        />
+        <ProfileMenu user={user} onLogout={onLogout} />
       </div>
     </header>
   );

@@ -115,7 +115,7 @@ export class TelehealthCatalogService {
         ...this.mapServiceSummary(service),
         category: service.category,
       },
-      
+      formFields: service.formFields,
     };
   }
 

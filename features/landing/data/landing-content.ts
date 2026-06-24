@@ -22,7 +22,7 @@ export const heroCards = [
     description: "",
     buttonLabel: "Request Treatment Now",
     variant: "patient" as const,
-    href: "/signup",
+    href: "/request-visit",
   },
 ] as const;
 

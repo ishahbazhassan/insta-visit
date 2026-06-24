@@ -3,6 +3,7 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 import * as bcrypt from 'bcrypt';
 import 'dotenv/config';
+import { seedTelehealth } from './seed/telehealth';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -11,7 +12,7 @@ const pool = new Pool({
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
-async function main() {
+async function seedAdmin() {
   const email = process.env.ADMIN_EMAIL ?? 'admin@instavisitrx.com';
   const plainPassword = process.env.ADMIN_PASSWORD ?? 'Admin@12345';
 
@@ -37,6 +38,11 @@ async function main() {
   console.log('Admin seeded successfully');
   console.log('Email:', email);
   console.log('Password:', plainPassword);
+}
+
+async function main() {
+  await seedAdmin();
+  await seedTelehealth(prisma);
 }
 
 main()

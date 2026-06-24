@@ -22,6 +22,37 @@ enum UserStatus {
   REJECTED
 }
 
+enum CatalogType {
+  DISEASE
+  MEDICATION
+}
+
+enum FormFieldType {
+  TEXT
+  TEXTAREA
+  NUMBER
+  SELECT
+  DATE
+  CHECKBOX
+}
+
+enum FormSection {
+  PHARMACY
+  PATIENT_INFO
+  HEALTH_INFO
+  SCREENING
+  CONSENT
+}
+
+enum VisitStatus {
+  SUBMITTED
+  ASSIGNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  REJECTED
+}
+
 model User {
   id        String     @id @default(uuid())
   firstName String
@@ -48,6 +79,145 @@ model User {
   updatedAt DateTime @updatedAt
 
   passwordResets PasswordReset[]
+  patientProfile PatientProfile?
+  patientVisits  Visit[]         @relation("PatientVisits")
+  providerVisits Visit[]         @relation("ProviderVisits")
+}
+
+model PatientProfile {
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  dateOfBirth DateTime?
+  sex         String?
+
+  streetAddress String?
+  city          String?
+  state         String?
+  zipCode       String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ServiceCategory {
+  id        String      @id @default(uuid())
+  name      String
+  slug      String      @unique
+  type      CatalogType
+  sortOrder Int         @default(0)
+  isActive  Boolean     @default(true)
+
+  services TelehealthService[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TelehealthService {
+  id         String          @id @default(uuid())
+  categoryId String
+  category   ServiceCategory @relation(fields: [categoryId], references: [id])
+
+  name        String
+  slug        String  @unique
+  description String?
+  icon        String?
+  price       Decimal? @db.Decimal(10, 2)
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+
+  formFields ServiceFormField[]
+  visits     Visit[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ServiceFormField {
+  id        String            @id @default(uuid())
+  serviceId String
+  service   TelehealthService @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  key       String
+  label     String
+  section   FormSection
+  fieldType FormFieldType
+  options   Json?
+  required  Boolean       @default(true)
+  sortOrder Int           @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([serviceId, key])
+}
+
+model Pharmacy {
+  id        String  @id @default(uuid())
+  name      String
+  address   String
+  city      String?
+  state     String?
+  zipCode   String?
+  phone     String?
+  fax       String?
+  latitude  Float?
+  longitude Float?
+  isActive  Boolean @default(true)
+
+  visits Visit[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Visit {
+  id        String @id @default(uuid())
+  visitCode String @unique
+
+  patientId  String
+  patient    User    @relation("PatientVisits", fields: [patientId], references: [id])
+  providerId String?
+  provider   User?   @relation("ProviderVisits", fields: [providerId], references: [id])
+
+  serviceId String
+  service   TelehealthService @relation(fields: [serviceId], references: [id])
+
+  pharmacyId String?
+  pharmacy   Pharmacy? @relation(fields: [pharmacyId], references: [id])
+
+  status       VisitStatus @default(SUBMITTED)
+  cancelReason String?
+
+  pastMedicalProblems String?
+  currentMedications  String?
+  knownAllergies      String?
+  height              String?
+  currentWeight       String?
+  bmi                 String?
+  medicationDesired   String?
+  dosageDesired       String?
+  quantityDesired     String?
+  reasonForMedication String?
+  chiefComplaint      String?
+  agreedToTerms       Boolean @default(false)
+
+  screeningAnswers Json?
+
+  assignedAt  DateTime?
+  startedAt   DateTime?
+  completedAt DateTime?
+  cancelledAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([patientId])
+  @@index([providerId])
+  @@index([status])
+  @@index([serviceId])
 }
 
 model PasswordReset {

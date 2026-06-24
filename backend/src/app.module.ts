@@ -5,6 +5,8 @@ import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { AdminModule } from './admin/admin.module';
+import { TelehealthModule } from './telehealth/telehealth.module';
+import { VisitRequestsModule } from './visit-requests/visit-requests.module';
 
 @Module({
   imports: [
@@ -14,6 +16,8 @@ import { AdminModule } from './admin/admin.module';
     PrismaModule,
     AuthModule,
     AdminModule,
+    TelehealthModule,
+    VisitRequestsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
